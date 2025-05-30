@@ -1,0 +1,30 @@
+<!-- templates/locations/add_location.html -->
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit">Save Location</button>
+</form>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+<script>
+  function initAutocomplete() {
+    var input = document.getElementById("id_address");
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.addListener("place_changed", function () {
+      var place = autocomplete.getPlace();
+      document.getElementById("id_latitude").value = place.geometry.location.lat();
+      document.getElementById("id_longitude").value = place.geometry.location.lng();
+
+      // Optional: auto-fill city and country
+      place.address_components.forEach(component => {
+        if (component.types.includes("locality")) {
+          document.getElementById("id_city").value = component.long_name;
+        }
+        if (component.types.includes("country")) {
+          document.getElementById("id_country").value = component.long_name;
+        }
+      });
+    });
+  }
+  google.maps.event.addDomListener(window, 'load', initAutocomplete);
+</script>
